@@ -1,10 +1,7 @@
 package hu.nive.ujratervezes.kepesitovizsga.jurrasic;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,24 +17,24 @@ public class JurassicPark {
     public List<String> checkOverpopulation() {
         try (
                 Connection conn = dataSource.getConnection();
-                PreparedStatement stmt =
-                       conn.prepareStatement("SELECT * FROM dinosaur WHERE (expected) < (actual) ORDER BY breed");
-
+               Statement stmt =
+                       conn.createStatement();
 
         ) {
 
+            getDinos(stmt);
+            return result;
 
-            return getDinos(stmt);
         } catch (SQLException sqle) {
             throw new IllegalArgumentException("Error", sqle);
         }
     }
 
-    public List<String> getDinos(PreparedStatement stmt) {
+    public void getDinos(Statement stmt) {
 
 
         try (
-                ResultSet rs = stmt.executeQuery();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM dinosaur WHERE (expected) < (actual) ORDER BY breed");
         ) {
             while (rs.next()) {
 
@@ -47,7 +44,6 @@ public class JurassicPark {
         } catch (SQLException sqle) {
             throw new IllegalArgumentException("ERRORRR", sqle);
         }
-        return result;
     }
 
 
